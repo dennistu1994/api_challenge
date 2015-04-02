@@ -119,8 +119,8 @@ DbHelper.mark_match_ids_processed = function(timestamp, callback){
 
 DbHelper.insert_nurf_match = function(match_data, callback){
 	this.init(function(){
-		//match_ids is an array of match ids
-		nurf_matches.insert([match_data], function(err, res){
+		//only insert the id as the rest of the data take up too much space
+		nurf_matches.insert([{matchId: match_data.matchId}], function(err, res){
 			if(typeof callback === 'function'){
 				callback(!err);
 			}
