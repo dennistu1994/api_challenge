@@ -27,5 +27,5 @@ DbHelper.init(function(){
 	});
 	
 	http.createServer(app).listen(process.env.PORT);
-	console.log('web server started on port '+process.env.PORT));
+	console.log('web server started on port '+process.env.PORT);
 });
