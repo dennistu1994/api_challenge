@@ -4,7 +4,6 @@ var na_endpoint = 'na.api.pvp.net';
 var match_api = '/api/lol/na/v2.2/match/';
 var champion_api = '/api/lol/static-data/na/v1.2/champion';
 var api_challenge_api = '/api/lol/na/v4.1/game/ids';
-console.log('using config vars');
 var api_key = process.env.RIOT_GAMES_API_KEY;
 
 var APIHelper = {};
