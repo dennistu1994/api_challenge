@@ -1,0 +1,14 @@
+{
+  "name": "api_challenge",
+  "version": "1.0.0",
+  "description": "project for the riot games api challenge",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dennis Tu",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "mongodb": "^2.0.25"
+  }
+}
