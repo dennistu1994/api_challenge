@@ -1,4 +1,4 @@
-var mongodb_host = 'mongodb://localhost:27017/api_challenge';
+var Constants = require('./constants.js');
 var mongodb = require('mongodb');
 var MongoClient = mongodb.MongoClient;
 var ObjectID = mongodb.ObjectID;
@@ -23,7 +23,7 @@ DbHelper.init = function(callback){
 			//waiting
 			this.init_queue.push(callback);
 		} else {
-			MongoClient.connect(mongodb_host, function(err, db) {
+			MongoClient.connect(Constants.TEST_MONGODB_HOST, function(err, db) {
 				//connected to db
 				if(!err){
 					if(database){
