@@ -9,13 +9,21 @@ var Worker = {
 	unprocessed_match_ids: null
 };
 
-Worker.get_next_unprocessed_match_ids = function(callback){
+Worker.get_next_unprocessed_match_ids = function(callback, onerr){
 	DbHelper.get_next_unprocessed_match_ids(function(match_ids){
 		console.log('got unprocessed match_ids for: '+match_ids.timestamp);
-		Worker.unprocessed_match_ids = match_ids;
-		if(typeof callback === 'function'){
-			callback();
+		if(match_ids){
+			Worker.unprocessed_match_ids = match_ids;
+			if(typeof callback === 'function'){
+				callback();
+			}
+		} else {
+			//no more unprocessed
+			if(typeof onerr === 'function'){
+				onerr();
+			}
 		}
+
 	});
 };
 
@@ -62,7 +70,6 @@ Worker.task = function(){
 				} else {
 					//caught up with match_ids
 					//do something else, a match_pull maybe?
-					console.log('caught up');
 					Worker.process_next_match_id();
 				}
 			});
