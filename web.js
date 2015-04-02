@@ -5,17 +5,20 @@ var bodyParser = require('body-parser');
 var DbHelper = require('./db_helper.js');
 
 DbHelper.init(function(){
+	app.use(bodyParser.json());
 	app.use("/", express.static('web/'));
 	app.post('/data', function(req, res){
 		//move the handler to a seperate file
 		if(req.body){
 			var action = req.body.action;
 			switch(action){
-				case 'create_user':
-					res.json({test: 1});
+				case 'get_champion_statistics':
+					DbHelper.get_champion_statistics(function(data, from_cache){
+						res.json({data: data, from_cache: from_cache});
+					});
 					break;
-				case 'authenticate_user':
-					res.json({test: 1});
+				default:
+					res.json('unknown action');
 					break;
 			}
 		} else {
@@ -24,5 +27,5 @@ DbHelper.init(function(){
 	});
 	
 	http.createServer(app).listen(process.env.PORT);
-	console.log('credentials server started');
+	console.log('web server started on port '+process.env.PORT));
 });

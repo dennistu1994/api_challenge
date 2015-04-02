@@ -12,7 +12,8 @@ var database = null;
 var DbHelper = {
 	inited: false,
 	init_called: false,
-	init_queue: []
+	init_queue: [],
+	cache: {}
 };
 
 DbHelper.init = function(callback){
@@ -195,6 +196,42 @@ DbHelper.reset_champion_statistics = function(callback){
 			}
 		});
 	});
+};
+
+DbHelper.get_champion_statistics = function(callback){
+	if(!this.cache.champion_statistics){
+		this.cache.champion_statistics = {timestamp: 0, data: null};
+	}
+	
+	var now = Date.now();
+	if(this.cache.champion_statistics.timestamp + Constants.DB_CACHE_TIME > now){
+		//use the cache
+		if(typeof callback === 'function'){
+			callback(this.cache.champion_statistics.data, true);
+		}
+	} else {
+		this.init(function(){
+			//match_ids is an array of match ids
+			champion_statistics.find({}, function(err, res){
+				if(typeof callback === 'function'){
+					if(err){
+						console.log(err);
+						if(typeof callback === 'function'){
+							callback(false, false);
+						}
+					} else {
+						res.toArray(function(err, res){
+							DbHelper.cache.champion_statistics.timestamp = now;
+							DbHelper.cache.champion_statistics.data = res;
+							if(typeof callback === 'function'){
+								callback(res, false);
+							}
+						});
+					}
+				}
+			});
+		});
+	}
 };
 
 DbHelper.close = function(){
