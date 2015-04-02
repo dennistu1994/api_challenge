@@ -23,7 +23,7 @@ DbHelper.init = function(callback){
 			//waiting
 			this.init_queue.push(callback);
 		} else {
-			MongoClient.connect(Constants.TEST_MONGODB_HOST, function(err, db) {
+			MongoClient.connect(process.env.MONGOLAB_URI, function(err, db) {
 				//connected to db
 				if(!err){
 					if(database){
