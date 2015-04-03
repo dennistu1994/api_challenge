@@ -56,6 +56,8 @@ DbHelper.init = function(callback){
 					if(typeof callback === 'function'){
 						callback(!err);
 					}
+				} else {
+					console.log(err);
 				}
 			});
 		}
@@ -173,6 +175,7 @@ DbHelper.increment_champion_stats = function(data, callback){
 						cache.update({
 							name: 'champion statistics'
 						}, {
+							name: 'champion statistics',
 							data: res
 						}, {
 							upsert: true
