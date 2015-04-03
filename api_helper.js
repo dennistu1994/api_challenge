@@ -21,6 +21,9 @@ APIHelper.get_nurf_match_ids = function(timestamp, callback){
 		res.on('end', function(){
 			callback(JSON.parse(str));
 		});
+		res.on('error', function(error){
+			console.log(error);
+		});
 	}).end();
 };
 
@@ -37,6 +40,9 @@ APIHelper.get_match = function(match_id, callback){
 		res.on('end', function(){
 			callback(JSON.parse(str));
 		});
+		res.on('error', function(error){
+			console.log(error);
+		});
 	}).end();
 }
 
@@ -52,6 +58,9 @@ APIHelper.get_champions = function(callback){
 		});
 		res.on('end', function(){
 			callback(JSON.parse(str));
+		});
+		res.on('error', function(error){
+			console.log(error);
 		});
 	}).end();
 };

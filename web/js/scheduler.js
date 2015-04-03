@@ -49,7 +49,7 @@ define(function(){
 		this.queue[0].tick();
 		if(this.queue[0].finished){
 			var done = this.queue.shift();
-			done.callback(done.context);
+			done.callback.call(done.context);
 		}
 		
 		if(this.queue.length === 0){
