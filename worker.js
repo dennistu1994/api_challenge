@@ -43,12 +43,11 @@ Worker.process_next_match_id = function(){
 		var next_match_id = Worker.unprocessed_match_ids.match_ids.pop();
 		console.log('processing: '+ next_match_id +' from timestamp '+Worker.unprocessed_match_ids.timestamp);
 		//get the match data
-		Worker.last_api_call = Worker.now;
 		APIHelper.get_match(next_match_id, function(match_data){
 			MatchProcessor.process_nurf_match(match_data, function(success){
 				//need to reprocess this match id as there was a failure
 				if(!success){
-					Worker.unprocessed_match_ids.push(next_match_id);
+					Worker.unprocessed_match_ids.match_ids.push(next_match_id);
 				}
 			});
 		});
@@ -60,8 +59,10 @@ Worker.task = function(){
 
 	if(Worker.now - Worker.last_api_call > Constants.API_CALL_INTERVAL){
 		//can perform a riot games api call
+		Worker.last_api_call = Worker.now;
 		if((Worker.now - Worker.last_match_ids_pull) > Constants.MATCH_IDS_PULL_INTERVAL /*MATCH_IDS_PULL_INTERVAL*/ ) {
 			//pull some match ids
+			Worker.last_match_ids_pull = Worker.now;
 			DbHelper.get_highest_timestamp(function(timestamp){
 				var next_timestamp = timestamp + 300; //5 minutes is the next timestamp to pull match ids with
 				if((next_timestamp * 1000) < (Worker.now - Constants.TEN_MINUTES)){ //only pull if the timestamp is at least 10 minutes before current time
@@ -72,8 +73,6 @@ Worker.task = function(){
 							console.log('pulled match_ids for : '+tmp);
 						});
 					});
-					Worker.last_api_call = Worker.now;
-					Worker.last_match_ids_pull = Worker.now;
 				} else {
 					//caught up with match_ids
 					//do something else, a match_pull maybe?
