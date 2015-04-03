@@ -14,6 +14,7 @@ Worker.get_next_unprocessed_match_ids = function(callback, onerr){
 		if(match_ids){
 			console.log('got unprocessed match_ids for: '+match_ids.timestamp);
 			Worker.unprocessed_match_ids = match_ids;
+			Worker.unprocessed_match_ids.num_match_ids = match_ids.match_ids.length;
 			Worker.unprocessed_match_ids.num_processed = 0;
 			if(typeof callback === 'function'){
 				callback();
@@ -33,7 +34,7 @@ Worker.process_next_match_id = function(){
 	if(!Worker.unprocessed_match_ids) {
 		//get new batch
 		Worker.get_next_unprocessed_match_ids();
-	} else if(Worker.unprocessed_match_ids.num_processed === Worker.unprocessed_match_ids.match_ids.length) {
+	} else if(Worker.unprocessed_match_ids.num_processed === Worker.unprocessed_match_ids.num_match_ids) {
 		//finished with this batch
 		console.log('marking batch '+Worker.unprocessed_match_ids.timestamp+' as processed');
 		DbHelper.mark_match_ids_processed(Worker.unprocessed_match_ids.timestamp);
