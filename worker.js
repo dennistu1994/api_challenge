@@ -14,6 +14,7 @@ Worker.get_next_unprocessed_match_ids = function(callback, onerr){
 		if(match_ids){
 			console.log('got unprocessed match_ids for: '+match_ids.timestamp);
 			Worker.unprocessed_match_ids = match_ids;
+			Worker.unprocessed_match_ids.num_processed = 0;
 			if(typeof callback === 'function'){
 				callback();
 			}
@@ -31,26 +32,30 @@ Worker.get_next_unprocessed_match_ids = function(callback, onerr){
 Worker.process_next_match_id = function(){
 	if(!Worker.unprocessed_match_ids) {
 		//get new batch
-		Worker.get_next_unprocessed_match_ids(Worker.process_next_match_id);
-	} else if(Worker.unprocessed_match_ids.match_ids.length === 0) {
+		Worker.get_next_unprocessed_match_ids();
+	} else if(Worker.unprocessed_match_ids.num_processed === Worker.unprocessed_match_ids.match_ids.length) {
 		//finished with this batch
 		console.log('marking batch '+Worker.unprocessed_match_ids.timestamp+' as processed');
-		DbHelper.mark_match_ids_processed(Worker.unprocessed_match_ids.timestamp, function(){
-			Worker.get_next_unprocessed_match_ids(Worker.process_next_match_id);
-		});
+		DbHelper.mark_match_ids_processed(Worker.unprocessed_match_ids.timestamp);
+		Worker.unprocessed_match_ids = null;
 	} else {
-		
-		var next_match_id = Worker.unprocessed_match_ids.match_ids.pop();
-		console.log('processing match '+ next_match_id +' from timestamp '+Worker.unprocessed_match_ids.timestamp);
-		//get the match data
-		APIHelper.get_match(next_match_id, function(match_data){
-			MatchProcessor.process_nurf_match(match_data, function(success){
-				//need to reprocess this match id as there was a failure
-				if(!success){
-					Worker.unprocessed_match_ids.match_ids.push(next_match_id);
-				}
+		if(Worker.unprocessed_match_ids.match_ids.length){
+			var next_match_id = Worker.unprocessed_match_ids.match_ids.pop();
+			console.log('processing match '+ next_match_id +' from timestamp '+Worker.unprocessed_match_ids.timestamp);
+			//get the match data
+			APIHelper.get_match(next_match_id, function(match_data){
+				MatchProcessor.process_nurf_match(match_data, function(success){
+					//need to reprocess this match id as there was a failure
+					if(!success){
+						Worker.unprocessed_match_ids.match_ids.push(next_match_id);
+					} else {
+						Worker.unprocessed_match_ids.num_processed++;
+					}
+				});
 			});
-		});
+		} else {
+			console.log('waiting for matches to finish processing');
+		}
 	}
 };
 

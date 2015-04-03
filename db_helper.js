@@ -140,47 +140,28 @@ DbHelper.insert_nurf_match = function(match_data, callback){
 DbHelper.increment_champion_stats = function(data, callback){
 	this.init(function(){
 		//match_ids is an array of match ids
-		var count = 0;
 		var champion_id;
+		var ops = [];
 		for(champion_id in data){
-			count++;
-			champion_statistics.update({
-				id: parseInt(champion_id)
-			}, {
-				$inc: data[champion_id]
-			}, function(err, res){
-				count--;
-				if(count == 0){
-					//finished
-					
-					var now = Date.now();
-					if(DbHelper.cache.champion_statistics.timestamp + Constants.DB_CACHE_TIME < now) {
-						//match_ids is an array of match ids
-						console.log('updating champion statistics cache');
-						champion_statistics.find({}, function(err, res){
-							if(typeof callback === 'function'){
-								if(err){
-									console.log('error updating champion statistics cache');
-									console.log(err);
-								} else {
-									res.toArray(function(err, res){
-										DbHelper.cache.champion_statistics.timestamp = now;
-										DbHelper.cache.champion_statistics.data = res;
-										while (DbHelper.customers.champion_statistics.length > 0){
-											DbHelper.customers.champion_statistics.pop()(res);
-										}
-									});
-								}
-							}
-						});
-					}
-					
-					if(typeof callback === 'function'){
-						callback(!err);
-					}
+			ops.push({
+				updateOne: {
+					filter: {
+						id: parseInt(champion_id)
+					},
+					update: {
+						$inc: data[champion_id]
+					},
+					upsert: false
 				}
 			});
 		}
+		champion_statistics.bulkWrite(ops, {
+			ordered: false
+		}, function(err, res){
+			if(typeof callback === 'function'){
+				callback(!err);
+			}
+		});
 	});
 };
 
@@ -231,10 +212,28 @@ DbHelper.reset_champion_statistics = function(callback){
 };
 
 DbHelper.get_champion_statistics = function(callback){
-	if(this.cache.champion_statistics.data){
-		callback(this.cache.champion_statistics.data);
+	var now = Date.now();
+	if(DbHelper.cache.champion_statistics.timestamp + Constants.DB_CACHE_TIME < now) {
+		//need to update cache
+		champion_statistics.find({}, function(err, res){
+			if(typeof callback === 'function'){
+				if(err){
+					console.log('error updating champion statistics cache');
+					console.log(err);
+					if(typeof callback === 'function'){
+						callback(DbHelper.cache.champion_statistics.data, true);
+					}
+				} else {
+					res.toArray(function(err, res){
+						DbHelper.cache.champion_statistics.timestamp = now;
+						DbHelper.cache.champion_statistics.data = res;
+						callback(DbHelper.cache.champion_statistics.data, false);
+					});
+				}
+			}
+		});
 	} else {
-		this.customers.champion_statistics.push(callback);
+		callback(DbHelper.cache.champion_statistics.data, true);
 	}
 };
 
