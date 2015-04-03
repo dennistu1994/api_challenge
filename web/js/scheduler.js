@@ -24,7 +24,7 @@ define(function(){
 		Task: Task
 	};
 
-	Scheduler.add_task = function(task){
+	Scheduler.queue_task = function(task){
 		this.queue.push(task);
 		if(!this.running){
 			this.running = true;
@@ -49,7 +49,9 @@ define(function(){
 		this.queue[0].tick();
 		if(this.queue[0].finished){
 			var done = this.queue.shift();
-			done.callback.call(done.context);
+			if(typeof done.callback === 'function'){
+				done.callback.call(done.context);
+			}
 		}
 		
 		if(this.queue.length === 0){

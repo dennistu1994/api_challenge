@@ -11,14 +11,15 @@ var Worker = {
 
 Worker.get_next_unprocessed_match_ids = function(callback, onerr){
 	DbHelper.get_next_unprocessed_match_ids(function(match_ids){
-		console.log('got unprocessed match_ids for: '+match_ids.timestamp);
 		if(match_ids){
+			console.log('got unprocessed match_ids for: '+match_ids.timestamp);
 			Worker.unprocessed_match_ids = match_ids;
 			if(typeof callback === 'function'){
 				callback();
 			}
 		} else {
 			//no more unprocessed
+			console.log('nothing to do');
 			if(typeof onerr === 'function'){
 				onerr();
 			}
@@ -86,7 +87,7 @@ Worker.task = function(){
 	//can't call riot api, do something
 
 	//schedule next task
-	setTimeout(Worker.task, Constants.API_CALL_INTERVAL);
+	setTimeout(Worker.task, Constants.WORKER_TASK_INTERVAL);
 };
 
 Worker.task();

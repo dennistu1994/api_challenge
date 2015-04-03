@@ -36,7 +36,7 @@ MatchProcessor.process_nurf_match = function(match_data, callback){
 				DbHelper.increment_champion_stats(champion_stats, callback);
 			} else {
 				console.log('already processed match '+match_data.matchId);
-				callback(false);
+				callback(true);
 			}
 		});
 	} else {

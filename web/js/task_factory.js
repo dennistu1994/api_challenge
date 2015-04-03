@@ -21,7 +21,15 @@ define(['scheduler'], function(Scheduler){
 			index: 0
 		}, function(){
 			var next = this.data[this.index];
-			
+			if(this.index === 0){
+				this.result.push(next);
+			} else {
+				var temp = 0;
+				while (next.win_rate < this.result[temp].winrate){
+					temp++;
+				}
+				this.result.splice(temp, 0, next); //insertion sort
+			}
 			this.index++;
 		}, function(){
 			return this.index === this.data.length;
