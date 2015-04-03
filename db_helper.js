@@ -8,6 +8,7 @@ var nurf_matches = null;
 var champions = null;
 var champion_statistics = null;
 var database = null;
+var cache = null;
 
 var DbHelper = {
 	inited: false,
@@ -45,6 +46,7 @@ DbHelper.init = function(callback){
 					matches = database.collection('nurf_matches');
 					champions = database.collection('champions');
 					champion_statistics = database.collection('champion_statistics');
+					cache = database.collection('cache');
 					DbHelper.inited = true;
 					var next_in_queue = DbHelper.init_queue.shift();
 					while(typeof next_in_queue === 'function'){
@@ -161,6 +163,28 @@ DbHelper.increment_champion_stats = function(data, callback){
 			if(typeof callback === 'function'){
 				callback(!err);
 			}
+			//update cache
+			champion_statistics.find({}, function(err, res){
+				if(err){
+					console.log('error updating champion statistics cache');
+					console.log(err);
+				} else {
+					res.toArray(function(err, res){
+						cache.update({
+							name: 'champion statistics'
+						}, {
+							data: res
+						}, {
+							upsert: true
+						}, function(err, res){
+							if(err){
+								console.log('error updating the champion statistics cache');
+							}
+						});
+					});
+				}
+			});
+			
 		});
 	});
 };
