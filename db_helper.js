@@ -239,7 +239,7 @@ DbHelper.get_champion_statistics = function(callback){
 	var now = Date.now();
 	if(DbHelper.cache.champion_statistics.timestamp + Constants.DB_CACHE_TIME < now) {
 		//need to update cache
-		champion_statistics.find({}, function(err, res){
+		cache.find({name: 'champion_statistics'}, function(err, res){
 			if(typeof callback === 'function'){
 				if(err){
 					console.log('error updating champion statistics cache');
@@ -248,11 +248,9 @@ DbHelper.get_champion_statistics = function(callback){
 						callback(DbHelper.cache.champion_statistics.data, true);
 					}
 				} else {
-					res.toArray(function(err, res){
-						DbHelper.cache.champion_statistics.timestamp = now;
-						DbHelper.cache.champion_statistics.data = res;
-						callback(DbHelper.cache.champion_statistics.data, false);
-					});
+					DbHelper.cache.champion_statistics.timestamp = now;
+					DbHelper.cache.champion_statistics.data = res.data;
+					callback(DbHelper.cache.champion_statistics.data, false);
 				}
 			}
 		});
