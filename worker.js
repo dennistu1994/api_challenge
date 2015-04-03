@@ -43,7 +43,12 @@ Worker.process_next_match_id = function(){
 		console.log('processing: '+ next_match_id +' from timestamp '+Worker.unprocessed_match_ids.timestamp);
 		//get the match data
 		APIHelper.get_match(next_match_id, function(match_data){
-			MatchProcessor.process_nurf_match(match_data);
+			MatchProcessor.process_nurf_match(match_data, function(success){
+				//need to reprocess this match id as there was a failure
+				if(!success){
+					Worker.unprocessed_match_ids.push(next_match_id);
+				}
+			});
 		});
 	}
 };
