@@ -243,30 +243,27 @@ DbHelper.get_champion_statistics = function(callback){
 	if(DbHelper.cache.champion_statistics.timestamp + Constants.DB_CACHE_TIME < now) {
 		//need to update cache
 		DbHelper.init(function(){
-			cache.find({name: 'champion_statistics'}, function(err, res){
-				if(typeof callback === 'function'){
-					if(err){
-						console.log('error updating champion statistics cache');
-						console.log(err);
-						if(typeof callback === 'function'){
-							callback(DbHelper.cache.champion_statistics.data, true);
-						}
-					} else {
-						res.next(function(err, res){
-							if(err){
-								console.log('error updating champion statistics cache');
-								console.log(err);
-								if(typeof callback === 'function'){
-									callback(DbHelper.cache.champion_statistics.data, true);
-								}
-							} else {
-								console.log(err, res);
-								DbHelper.cache.champion_statistics.timestamp = now;
-								DbHelper.cache.champion_statistics.data = res.data;
-								callback(DbHelper.cache.champion_statistics.data, false);
-							}
-						});
+			cache.find({name: 'champion statistics'}, function(err, res){
+				if(err){
+					console.log('error updating champion statistics cache');
+					console.log(err);
+					if(typeof callback === 'function'){
+						callback(DbHelper.cache.champion_statistics.data, true);
 					}
+				} else {
+					res.next(function(err, res){
+						if(err){
+							console.log('error updating champion statistics cache');
+							console.log(err);
+							if(typeof callback === 'function'){
+								callback(DbHelper.cache.champion_statistics.data, true);
+							}
+						} else {
+							DbHelper.cache.champion_statistics.timestamp = now;
+							DbHelper.cache.champion_statistics.data = res.data;
+							callback(DbHelper.cache.champion_statistics.data, false);
+						}
+					});
 				}
 			});
 		});
