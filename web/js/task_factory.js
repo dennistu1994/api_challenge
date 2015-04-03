@@ -25,7 +25,7 @@ define(['scheduler'], function(Scheduler){
 				this.result.push(next);
 			} else {
 				var temp = 0;
-				while (next.win_rate < this.result[temp].winrate){
+				while (this.result[temp] && (next.win_rate > this.result[temp].win_rate)){
 					temp++;
 				}
 				this.result.splice(temp, 0, next); //insertion sort
@@ -33,6 +33,40 @@ define(['scheduler'], function(Scheduler){
 			this.index++;
 		}, function(){
 			return this.index === this.data.length;
+		}, callback);
+	};
+	
+	TaskFactory.calculate_matches_analyzed = function(champion_array, callback){
+		return new Scheduler.Task({
+			data: champion_array,
+			current_index: 0,
+			result: 0
+		}, function(){
+			//step
+			this.result += this.data[this.current_index].match_count;
+			this.current_index++;
+		}, function(){
+			//condition
+			if(this.current_index === this.data.length){
+				return true;
+			}
+		}, callback);
+	};
+	
+	TaskFactory.calculate_total_win_count = function(champion_array, callback){
+		return new Scheduler.Task({
+			data: champion_array,
+			current_index: 0,
+			result: 0
+		}, function(){
+			//step
+			this.result += this.data[this.current_index].win_count;
+			this.current_index++;
+		}, function(){
+			//condition
+			if(this.current_index === this.data.length){
+				return true;
+			}
 		}, callback);
 	};
 	

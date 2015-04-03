@@ -34,14 +34,14 @@ Worker.process_next_match_id = function(){
 		Worker.get_next_unprocessed_match_ids(Worker.process_next_match_id);
 	} else if(Worker.unprocessed_match_ids.match_ids.length === 0) {
 		//finished with this batch
-		console.log('marking '+Worker.unprocessed_match_ids.timestamp+' as processed');
+		console.log('marking batch '+Worker.unprocessed_match_ids.timestamp+' as processed');
 		DbHelper.mark_match_ids_processed(Worker.unprocessed_match_ids.timestamp, function(){
 			Worker.get_next_unprocessed_match_ids(Worker.process_next_match_id);
 		});
 	} else {
 		
 		var next_match_id = Worker.unprocessed_match_ids.match_ids.pop();
-		console.log('processing: '+ next_match_id +' from timestamp '+Worker.unprocessed_match_ids.timestamp);
+		console.log('processing match '+ next_match_id +' from timestamp '+Worker.unprocessed_match_ids.timestamp);
 		//get the match data
 		APIHelper.get_match(next_match_id, function(match_data){
 			MatchProcessor.process_nurf_match(match_data, function(success){

@@ -13,7 +13,15 @@ var DbHelper = {
 	inited: false,
 	init_called: false,
 	init_queue: [],
-	cache: {}
+	customers: {
+		champion_statistics: []
+	},
+	cache: {
+		champion_statistics: {
+			timestamp: 0,
+			data: null
+		}
+	}
 };
 
 DbHelper.init = function(callback){
@@ -143,6 +151,30 @@ DbHelper.increment_champion_stats = function(data, callback){
 			}, function(err, res){
 				count--;
 				if(count == 0){
+					//finished
+					
+					var now = Date.now();
+					if(DbHelper.cache.champion_statistics.timestamp + Constants.DB_CACHE_TIME < now) {
+						//match_ids is an array of match ids
+						console.log('updating champion statistics cache');
+						champion_statistics.find({}, function(err, res){
+							if(typeof callback === 'function'){
+								if(err){
+									console.log('error updating champion statistics cache');
+									console.log(err);
+								} else {
+									res.toArray(function(err, res){
+										DbHelper.cache.champion_statistics.timestamp = now;
+										DbHelper.cache.champion_statistics.data = res;
+										while (DbHelper.customers.champion_statistics.length > 0){
+											DbHelper.customers.champion_statistics.pop()(res);
+										}
+									});
+								}
+							}
+						});
+					}
+					
 					if(typeof callback === 'function'){
 						callback(!err);
 					}
@@ -199,38 +231,10 @@ DbHelper.reset_champion_statistics = function(callback){
 };
 
 DbHelper.get_champion_statistics = function(callback){
-	if(!this.cache.champion_statistics){
-		this.cache.champion_statistics = {timestamp: 0, data: null};
-	}
-	
-	var now = Date.now();
-	if(this.cache.champion_statistics.timestamp + Constants.DB_CACHE_TIME > now){
-		//use the cache
-		if(typeof callback === 'function'){
-			callback(this.cache.champion_statistics.data, true);
-		}
+	if(this.cache.champion_statistics.data){
+		callback(this.cache.champion_statistics.data);
 	} else {
-		this.init(function(){
-			//match_ids is an array of match ids
-			champion_statistics.find({}, function(err, res){
-				if(typeof callback === 'function'){
-					if(err){
-						console.log(err);
-						if(typeof callback === 'function'){
-							callback(false, false);
-						}
-					} else {
-						res.toArray(function(err, res){
-							DbHelper.cache.champion_statistics.timestamp = now;
-							DbHelper.cache.champion_statistics.data = res;
-							if(typeof callback === 'function'){
-								callback(res, false);
-							}
-						});
-					}
-				}
-			});
-		});
+		this.customers.champion_statistics.push(callback);
 	}
 };
 
