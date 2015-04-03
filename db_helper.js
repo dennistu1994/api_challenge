@@ -248,10 +248,20 @@ DbHelper.get_champion_statistics = function(callback){
 						callback(DbHelper.cache.champion_statistics.data, true);
 					}
 				} else {
-					console.log(err, res);
-					DbHelper.cache.champion_statistics.timestamp = now;
-					DbHelper.cache.champion_statistics.data = res.data;
-					callback(DbHelper.cache.champion_statistics.data, false);
+					res.next(function(err, res){
+						if(err){
+							console.log('error updating champion statistics cache');
+							console.log(err);
+							if(typeof callback === 'function'){
+								callback(DbHelper.cache.champion_statistics.data, true);
+							}
+						} else {
+							console.log(err, res);
+							DbHelper.cache.champion_statistics.timestamp = now;
+							DbHelper.cache.champion_statistics.data = res.data;
+							callback(DbHelper.cache.champion_statistics.data, false);
+						}
+					});
 				}
 			}
 		});
