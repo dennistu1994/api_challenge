@@ -43,6 +43,7 @@ Worker.process_next_match_id = function(){
 		var next_match_id = Worker.unprocessed_match_ids.match_ids.pop();
 		console.log('processing: '+ next_match_id +' from timestamp '+Worker.unprocessed_match_ids.timestamp);
 		//get the match data
+		Worker.last_api_call = Worker.now;
 		APIHelper.get_match(next_match_id, function(match_data){
 			MatchProcessor.process_nurf_match(match_data, function(success){
 				//need to reprocess this match id as there was a failure
@@ -87,7 +88,7 @@ Worker.task = function(){
 	//can't call riot api, do something
 
 	//schedule next task
-	setTimeout(Worker.task, Constants.WORKER_TASK_INTERVAL);
+	setTimeout(Worker.task, Constants.WORKER_TASK_INTERVAL);	
 };
 
 Worker.task();
