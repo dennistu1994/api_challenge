@@ -6,9 +6,13 @@ var DbHelper = require('./db_helper.js');
 
 DbHelper.init(function(){
 	app.use(bodyParser.json());
+	app.use(function(req, res, next){
+	    res.header('Access-Control-Allow-Origin', *);
+	    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+	    next();
+	});
 	app.use("/", express.static('web/'));
 	app.post('/data', function(req, res){
-		res.header('Access-Control-Allow-Origin', '*');
 		//move the handler to a seperate file
 		if(req.body){
 			var action = req.body.action;
