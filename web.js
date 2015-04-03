@@ -8,6 +8,7 @@ DbHelper.init(function(){
 	app.use(bodyParser.json());
 	app.use("/", express.static('web/'));
 	app.post('/data', function(req, res){
+		res.header('Access-Control-Allow-Origin', '*');
 		//move the handler to a seperate file
 		if(req.body){
 			var action = req.body.action;
