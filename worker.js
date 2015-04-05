@@ -84,16 +84,17 @@ Worker.task = function(){
 			//pull some match ids
 			Worker.last_match_ids_pull = Worker.now;
 			if(Worker.next_timestamp_override > 0){
-				APIHelper.get_nurf_match_ids(Worker.next_timestamp_override, function(match_ids){
+				var next_timestamp = Worker.next_timestamp_override;
+				APIHelper.get_nurf_match_ids(next_timestamp, function(match_ids){
 					if(match_ids instanceof Array){
-						DbHelper.insert_nurf_match_ids(Worker.next_timestamp_override, match_ids, function(){
+						DbHelper.insert_nurf_match_ids(next_timestamp, match_ids, function(){
 							var tmp = new Date(0);
-							tmp.setUTCSeconds(Worker.next_timestamp_override);
+							tmp.setUTCSeconds(next_timestamp);
 							console.log('pulled match_ids for : '+tmp);
 						});
 					} else {
 						var tmp = new Date(0);
-						tmp.setUTCSeconds(Worker.next_timestamp_override);
+						tmp.setUTCSeconds(next_timestamp);
 						console.log('error pulling match_ids for : '+tmp, match_ids);
 					}
 
