@@ -22,6 +22,7 @@ Worker.get_next_unprocessed_match_ids = function(callback, onerr){
 					callback();
 				}
 			} else {
+				console.log(match_ids.match_ids);
 				//rate limit error, retro fix here
 				console.log('going to repull match_ids for timestamp: '+match_ids.timestamp);
 				Worker.next_timestamp_override = match_ids.timestamp;
