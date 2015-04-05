@@ -6,19 +6,31 @@ var Worker = {
 	last_api_call: 0,
 	last_match_ids_pull: 0,
 	now: 0,
-	unprocessed_match_ids: null
+	unprocessed_match_ids: null,
+	next_timestamp_override: -1
 };
 
 Worker.get_next_unprocessed_match_ids = function(callback, onerr){
 	DbHelper.get_next_unprocessed_match_ids(function(match_ids){
 		if(match_ids){
 			console.log('got unprocessed match_ids for: '+match_ids.timestamp);
-			Worker.unprocessed_match_ids = match_ids;
-			Worker.unprocessed_match_ids.num_match_ids = match_ids.match_ids.length;
-			Worker.unprocessed_match_ids.num_processed = 0;
-			if(typeof callback === 'function'){
-				callback();
+			if(match_ids.match_ids instanceof Array){
+				Worker.unprocessed_match_ids = match_ids;
+				Worker.unprocessed_match_ids.num_match_ids = match_ids.match_ids.length;
+				Worker.unprocessed_match_ids.num_processed = 0;
+				if(typeof callback === 'function'){
+					callback();
+				}
+			} else {
+				//rate limit error, retro fix here
+				console.log('going to repull match_ids for timestamp: '+match_ids.timestamp);
+				Worker.next_timestamp_override = match_ids.timestamp;
+				
+				if(typeof onerr === 'function'){
+					onerr();
+				}
 			}
+
 		} else {
 			//no more unprocessed
 			console.log('nothing to do');
@@ -67,25 +79,49 @@ Worker.task = function(){
 	if(Worker.now - Worker.last_api_call > Constants.API_CALL_INTERVAL){
 		//can perform a riot games api call
 		Worker.last_api_call = Worker.now;
-		if((Worker.now - Worker.last_match_ids_pull) > Constants.MATCH_IDS_PULL_INTERVAL /*MATCH_IDS_PULL_INTERVAL*/ ) {
+		if( ((Worker.now - Worker.last_match_ids_pull) > Constants.MATCH_IDS_PULL_INTERVAL) || Worker.next_timestamp_override > 0) {
 			//pull some match ids
 			Worker.last_match_ids_pull = Worker.now;
-			DbHelper.get_highest_timestamp(function(timestamp){
-				var next_timestamp = timestamp + 300; //5 minutes is the next timestamp to pull match ids with
-				if((next_timestamp * 1000) < (Worker.now - Constants.TEN_MINUTES)){ //only pull if the timestamp is at least 10 minutes before current time
-					APIHelper.get_nurf_match_ids(next_timestamp, function(match_ids){
-						DbHelper.insert_nurf_match_ids(next_timestamp, match_ids, function(){
+			if(Worker.next_timestamp_override > 0){
+				APIHelper.get_nurf_match_ids(Worker.next_timestamp_override, function(match_ids){
+					if(match_ids instanceof Array){
+						DbHelper.insert_nurf_match_ids(Worker.next_timestamp_override, match_ids, function(){
 							var tmp = new Date(0);
-							tmp.setUTCSeconds(next_timestamp);
+							tmp.setUTCSeconds(Worker.next_timestamp_override);
 							console.log('pulled match_ids for : '+tmp);
 						});
-					});
-				} else {
-					//caught up with match_ids
-					//do something else, a match_pull maybe?
-					Worker.process_next_match_id();
-				}
-			});
+					} else {
+						var tmp = new Date(0);
+						tmp.setUTCSeconds(Worker.next_timestamp_override);
+						console.log('error pulling match_ids for : '+tmp, match_ids);
+					}
+
+				});
+				Worker.next_timestamp_override = -1;
+			} else {
+				DbHelper.get_highest_timestamp(function(timestamp){
+					var next_timestamp = timestamp + 300; //5 minutes is the next timestamp to pull match ids with
+					if((next_timestamp * 1000) < (Worker.now - Constants.TEN_MINUTES)){ //only pull if the timestamp is at least 10 minutes before current time
+						APIHelper.get_nurf_match_ids(next_timestamp, function(match_ids){
+							if(match_ids instanceof Array){
+								DbHelper.insert_nurf_match_ids(next_timestamp, match_ids, function(){
+									var tmp = new Date(0);
+									tmp.setUTCSeconds(next_timestamp);
+									console.log('pulled match_ids for : '+tmp);
+								});
+							} else {
+								var tmp = new Date(0);
+								tmp.setUTCSeconds(next_timestamp);
+								console.log('error pulling match_ids for : '+tmp, match_ids);
+							}
+						});
+					} else {
+						//caught up with match_ids
+						//do something else, a match_pull maybe?
+						Worker.process_next_match_id();
+					}
+				});
+			}
 		} else {
 			//perform a match pull if possible
 			Worker.process_next_match_id();
