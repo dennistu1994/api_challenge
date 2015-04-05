@@ -55,6 +55,7 @@ Worker.process_next_match_id = function(){
 				});
 			});
 		} else {
+			console.log(Worker.unprocessed_match_ids);
 			console.log('waiting for matches to finish processing');
 		}
 	}

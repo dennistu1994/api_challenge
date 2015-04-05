@@ -9,7 +9,12 @@ require(['scheduler', 'ajax_helper', 'task_factory'], function(Scheduler, AjaxHe
 		var calculate_win_rate = TaskFactory.calculate_win_rate(res.data);
 		Scheduler.queue_task(calculate_win_rate);
 		
-		var sort_by_win_rate = TaskFactory.sort_by_win_rate(res.data);
+		var sort_by_win_rate = TaskFactory.sort_by_win_rate(res.data, function(){
+			window.calculated_stats.sort_by_win_rate = sort_by_win_rate.context.result;
+			sort_by_win_rate.context.result.forEach(function(champ){
+				console.log(champ.name, champ.win_rate);
+			});
+		});
 		Scheduler.queue_task(sort_by_win_rate);
 		
 		var calculate_matches_analyzed = TaskFactory.calculate_matches_analyzed(res.data, function(){
