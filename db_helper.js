@@ -71,9 +71,11 @@ DbHelper.insert_nurf_match_ids = function(timestamp, match_ids, callback){
 		nurf_match_ids.update({
 			timestamp: timestamp
 		},{
-			timestamp: timestamp,
-			match_ids: match_ids,
-			processed: false
+			$set:{
+				timestamp: timestamp,
+				match_ids: match_ids,
+				processed: false
+			}
 		}, {
 			upsert: true
 		}, function(err, res){
