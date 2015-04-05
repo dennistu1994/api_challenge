@@ -66,16 +66,15 @@ DbHelper.init = function(callback){
 };
 
 DbHelper.insert_nurf_match_ids = function(timestamp, match_ids, callback){
+	console.log('DbHelper: timestamp: 'timestamp+' '+typeof timestamp);
 	this.init(function(){
 		//match_ids is an array of long numbers
 		nurf_match_ids.update({
 			timestamp: timestamp
 		},{
-			$set:{
-				timestamp: timestamp,
-				match_ids: match_ids,
-				processed: false
-			}
+			timestamp: timestamp,
+			match_ids: match_ids,
+			processed: false
 		}, {
 			upsert: true
 		}, function(err, res){
