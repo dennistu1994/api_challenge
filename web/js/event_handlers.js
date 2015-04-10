@@ -39,7 +39,6 @@ define(['config', 'html_templates'], function(Config, HTMLTemplates){
 		show_champion_statistics: function(){
 			//set modal data
 			var champion = $(this).data('champion');
-			console.log(champion);
 			$('.champion_statistics_modal .champion_portrait').css('background-image', 'url(\''+HTMLTemplates.get_icon_url(champion.key)+'\')');
 			$('.champion_statistics_modal .champion_name').html(champion.name);
 			$('.champion_statistics_modal .champion_title').html(champion.title);

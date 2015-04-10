@@ -13,8 +13,6 @@ define(function(){
 			success: function(res){
 				if(typeof callback==="function"){
 					callback(res);
-				} else {
-					console.log(res);
 				}
 			}
 		});

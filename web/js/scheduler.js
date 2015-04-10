@@ -50,7 +50,6 @@ define(function(){
 		this.queue[0].tick();
 		if(this.queue[0].finished){
 			var done = this.queue.shift();
-			console.log('finished '+done.name);
 			if(typeof done.callback === 'function'){
 				done.callback.call(done.context);
 			}
