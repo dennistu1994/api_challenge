@@ -3,6 +3,7 @@ define(['config', 'html_templates'], function(Config, HTMLTemplates){
 		champion_array: null,
 		
 		champion_search: function(){
+			//the input element is always the context of this function call
 			if(!EventHandlers.champion_array){
 				return;
 			} else {

@@ -1,3 +1,5 @@
 node_modules/
 temp.js
 .env
+reset_champion_statistics.js
+get_champions.js
