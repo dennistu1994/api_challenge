@@ -74,6 +74,23 @@ Worker.process_next_match_id = function(){
 	}
 };
 
+Worker.pull_match_ids = function(timestamp){
+	APIHelper.get_nurf_match_ids(timestamp, function(match_ids){
+		if(match_ids instanceof Array){
+			DbHelper.insert_nurf_match_ids(timestamp, match_ids, function(){
+				var tmp = new Date(0);
+				tmp.setUTCSeconds(timestamp);
+				console.log('pulled match_ids for : '+tmp);
+			});
+		} else {
+			var tmp = new Date(0);
+			tmp.setUTCSeconds(timestamp);
+			console.log('error pulling match_ids for : '+tmp, match_ids);
+		}
+
+	});
+};
+
 Worker.task = function(){
 	Worker.now = Date.now();
 
@@ -84,39 +101,17 @@ Worker.task = function(){
 			//pull some match ids
 			Worker.last_match_ids_pull = Worker.now;
 			if(Worker.next_timestamp_override > 0){
+				
+				//overriding the next timestamp to pull (because of )
 				var next_timestamp = Worker.next_timestamp_override;
-				APIHelper.get_nurf_match_ids(next_timestamp, function(match_ids){
-					if(match_ids instanceof Array){
-						DbHelper.insert_nurf_match_ids(next_timestamp, match_ids, function(){
-							var tmp = new Date(0);
-							tmp.setUTCSeconds(next_timestamp);
-							console.log('pulled match_ids for : '+tmp);
-						});
-					} else {
-						var tmp = new Date(0);
-						tmp.setUTCSeconds(next_timestamp);
-						console.log('error pulling match_ids for : '+tmp, match_ids);
-					}
-
-				});
+				Worker.pull_match_ids(next_timestamp);
 				Worker.next_timestamp_override = -1;
 			} else {
+				//pull the next timestamp
 				DbHelper.get_highest_timestamp(function(timestamp){
 					var next_timestamp = timestamp + 300; //5 minutes is the next timestamp to pull match ids with
 					if((next_timestamp * 1000) < (Worker.now - Constants.TEN_MINUTES)){ //only pull if the timestamp is at least 10 minutes before current time
-						APIHelper.get_nurf_match_ids(next_timestamp, function(match_ids){
-							if(match_ids instanceof Array){
-								DbHelper.insert_nurf_match_ids(next_timestamp, match_ids, function(){
-									var tmp = new Date(0);
-									tmp.setUTCSeconds(next_timestamp);
-									console.log('pulled match_ids for : '+tmp);
-								});
-							} else {
-								var tmp = new Date(0);
-								tmp.setUTCSeconds(next_timestamp);
-								console.log('error pulling match_ids for : '+tmp, match_ids);
-							}
-						});
+						Worker.pull_match_ids(next_timestamp);
 					} else {
 						//caught up with match_ids
 						//do something else, a match_pull maybe?

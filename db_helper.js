@@ -148,16 +148,15 @@ DbHelper.insert_nurf_match = function(match_data, callback){
 DbHelper.increment_champion_stats = function(data, callback){
 	this.init(function(){
 		//match_ids is an array of match ids
-		var champion_id;
-		var ops = [];
-		for(champion_id in data){
+		var i, ops = [];
+		for(i = 0;i < data.length;i++){
 			ops.push({
 				updateOne: {
 					filter: {
-						id: parseInt(champion_id)
+						id: parseInt(data[i].id)
 					},
 					update: {
-						$inc: data[champion_id]
+						$inc: data[i].inc_data
 					},
 					upsert: false
 				}

@@ -1,0 +1,41 @@
+.app-panel{
+	max-width: 960px;
+	margin-left: auto;
+	margin-right: auto;
+	min-height: 200px;
+}
+
+.champion_statistics {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.champion_icon{
+	width: 57px;
+	height: 57px;
+	display: inline-block;
+	background-size: contain;
+	cursor: pointer;
+}
+
+.champion_icon.gray{
+}
+
+.champion_search{
+	margin: 10px 0px 10px 0px;
+}
+
+.spinner{
+	width:16px;
+	height: 16px;
+	display: inline-block;
+	background-image: url(/images/spinner.gif);
+}
+
+.average_deaths{
+	color: red;
+}
