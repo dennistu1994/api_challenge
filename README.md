@@ -5,6 +5,12 @@ A working copy of this app is hosted <a href="https://api-challenge-web.herokuap
 
 To run this webapp locally, you need a machine with Node.js and MongoDB installed
 
+# App Structure
+- This app consists of a worker compoenent (worker.js) and a web server compoenent (web.js)
+- worker.js calls the Riot Games API at an interval to grab URF match ids and match data
+- worker.js also processes the match data and stores the result into mongodb
+- web.js serves static files located in the web folder, and also serves champion statistics at `/data` path
+
 # Local Setup:
 1. download and extract the repository, open terminal and navigate to the extracted repo
 2. make sure `mongod` is running, then run `mongorestore -h <db host> -d <db name> db_template/api_challenge`
