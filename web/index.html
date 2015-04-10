@@ -40,7 +40,7 @@
 			<div class="row">
 				<div class="col-sm-10">
 					<input class="form-control champion_search" type="text"
-						placeholder="Search for champion" />
+						placeholder="Search for champion" disabled />
 				</div>
 				<div class="col-sm-2">
 					<div class="dropdown">
@@ -48,12 +48,15 @@
 							type="button" data-toggle="dropdown" aria-expanded="false">
 							Sort By<span class="caret"></span>
 						</button>
-						<ul class="dropdown-menu" role="menu"
-							aria-labelledby="dropdownMenu1">
-							<li role="presentation">
-							<a role="menuitem" tabindex="-1" href="#" onclick="$('.champion_statistics.active').removeClass('active');$('.sorted_by_win_rate').addClass('active');">Win Rate</a></li>
-							<li role="presentation">
-							<a role="menuitem" tabindex="-1" href="#" onclick="$('.champion_statistics.active').removeClass('active');$('.sorted_by_penta_kills').addClass('active');">Pentakills</a></li>
+
+						<ul class="dropdown-menu sort_by_menu" role="menu">
+							<li role="presentation"><a role="menuitem" tabindex="-1"
+								href="#" data-target-class="sorted_by_win_rate">Win Rate</a></li>
+							<li role="presentation"><a role="menuitem" tabindex="-1"
+								href="#" data-target-class="sorted_by_ban_rate">Ban Rate</a></li>
+							<li role="presentation"><a role="menuitem" tabindex="-1"
+								href="#" data-target-class="sorted_by_penta_kills">Pentakills</a></li>
+
 						</ul>
 					</div>
 				</div>
@@ -65,8 +68,12 @@
 			<div class="panel champion_statistics sorted_by_win_rate">
 				Sorting <span class="spinner"></span>
 			</div>
-			
+
 			<div class="panel champion_statistics sorted_by_penta_kills">
+				Sorting <span class="spinner"></span>
+			</div>
+
+			<div class="panel champion_statistics sorted_by_ban_rate">
 				Sorting <span class="spinner"></span>
 			</div>
 		</div>
@@ -84,14 +91,21 @@
 						aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
-					<h4>
-						<span class="champion_name"></span>, <span class="champion_title"></span>
-					</h4>
+					<div class="champion_summary">
+						<h4>
+							<span class="champion_portrait"> </span> <span
+								class="champion_name"></span>, <span class="champion_title"></span>
+						</h4>
+						<span>Matches Recorded: <span
+							class="match_count_placeholder"></span></span> | <span>Banned in
+							<span class="ban_count_placeholder"></span> out of <span
+							class="total_match_count_placeholder"></span> games (<span
+							class="ban_rate_placeholder"></span>%)
+						</span>
+					</div>
 				</div>
 				<div class="modal-body">
-					<p>
-						Matches Recorded: <span class="match_count_placeholder"></span>
-					</p>
+					<p></p>
 					<p>
 						Win Rate: <span class="win_rate_placeholder"></span>
 					</p>
@@ -99,7 +113,7 @@
 						Average KDA: <span class="average_kda_placeholder"></span>
 					</p>
 					<p>
-						Pentakills: <span class="penta_kills_placeholder"></span>
+						Total Pentakills: <span class="penta_kills_placeholder"></span>
 					</p>
 				</div>
 				<div class="modal-footer">

@@ -2,7 +2,8 @@ define(function(){
 	/*
 	 * context will be used to execute step, condition and callback
 	 */
-	function Task(context, step, condition, callback){
+	function Task(name, context, step, condition, callback){
+		this.name = name;
 		this.context = context;
 		this.step = step;
 		this.condition = condition;
@@ -49,6 +50,7 @@ define(function(){
 		this.queue[0].tick();
 		if(this.queue[0].finished){
 			var done = this.queue.shift();
+			console.log('finished '+done.name);
 			if(typeof done.callback === 'function'){
 				done.callback.call(done.context);
 			}

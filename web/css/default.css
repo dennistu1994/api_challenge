@@ -19,6 +19,13 @@
 	display:block;
 }
 
+.champion_portrait{
+	width: 57px;
+	height: 57px;
+	display: inline-block;
+	background-size: contain;
+}
+
 .champion_icon,.champion_icon.gray:hover{
 	width: 57px;
 	height: 57px;
