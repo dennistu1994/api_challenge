@@ -36,13 +36,15 @@ MatchProcessor.process_nurf_match = function(match_data, callback){
 					});
 				}
 				for(i = 0; i < match_data.teams.length; i++){
-					for(j = 0; j < match_data.teams[i].bans.length; j++){
-						champion_stats.push({
-							id: match_data.participants[i].championId,
-							inc_data: {
-								ban_count: 1
-							}
-						});
+					if(match_data.teams[i].bans){
+						for(j = 0; j < match_data.teams[i].bans.length; j++){
+							champion_stats.push({
+								id: match_data.participants[i].championId,
+								inc_data: {
+									ban_count: 1
+								}
+							});
+						}
 					}
 				}
 				DbHelper.increment_champion_stats(champion_stats, callback);

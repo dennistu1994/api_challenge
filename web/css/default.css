@@ -12,6 +12,11 @@
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+	display: none;
+}
+
+.champion_statistics.active{
+	display:block;
 }
 
 .champion_icon{
@@ -25,8 +30,14 @@
 .champion_icon.gray{
 }
 
-.champion_search{
+.champion_search, .sort_dropdown{
 	margin: 10px 0px 10px 0px;
+	width: 100%;
+}
+
+.sort_dropdown{
+	padding-left: 0;
+	padding-right: 0;	
 }
 
 .spinner{
@@ -38,4 +49,13 @@
 
 .average_deaths{
 	color: red;
+}
+
+.divider {
+  height: 1px;
+  width:100%;
+  display:block;
+  margin: 9px 0;
+  overflow: hidden;
+  background-color: #e5e5e5;
 }

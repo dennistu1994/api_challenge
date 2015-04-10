@@ -1,4 +1,4 @@
-require(['scheduler', 'ajax_helper', 'task_factory', 'event_handlers'], function(Scheduler, AjaxHelper, TaskFactory, EventHandlers){
+require(['scheduler', 'ajax_helper', 'task_factory', 'event_handlers', 'html_templates'], function(Scheduler, AjaxHelper, TaskFactory, EventHandlers, HTMLTemplates){
 	$(function(){
 		var basic_stats_available = false;
 		AjaxHelper.get_champion_statistics(function(res){
@@ -9,6 +9,7 @@ require(['scheduler', 'ajax_helper', 'task_factory', 'event_handlers'], function
 			var make_champion_html = TaskFactory.make_champion_html(res.data);
 			Scheduler.queue_task(make_champion_html);
 			
+			$('.total_match_count_placeholder').html(HTMLTemplates.spinner);
 			$('input.champion_search').on('input', EventHandlers.champion_search);
 			$('.panel.champion_statistics').on('click', '.champion_icon', EventHandlers.show_champion_statistics);
 
@@ -25,6 +26,9 @@ require(['scheduler', 'ajax_helper', 'task_factory', 'event_handlers'], function
 				sort_by_win_rate.context.result.forEach(function(champ){
 					console.log(champ.name, champ.id, champ.win_rate);
 				});
+				
+				var show_sorted_by_win_rate = TaskFactory.show_sorted_champion_array(sort_by_win_rate.context.result, '.panel.champion_statistics.sorted_by_win_rate');
+				Scheduler.queue_task(show_sorted_by_win_rate);
 			});
 			Scheduler.queue_task(sort_by_win_rate);
 			
@@ -34,7 +38,7 @@ require(['scheduler', 'ajax_helper', 'task_factory', 'event_handlers'], function
 			Scheduler.queue_task(calculate_matches_analyzed);
 			
 			var calculate_total_win_count = TaskFactory.calculate_total_win_count(res.data, function(){
-				window.calculated_stats.total_win_count = calculate_total_win_count.context.result;
+				window.calculated_stats.win_count = calculate_total_win_count.context.result;
 			});
 			Scheduler.queue_task(calculate_total_win_count);
 		});

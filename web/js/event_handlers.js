@@ -22,6 +22,7 @@ define(['config'], function(Config){
 		show_champion_statistics: function(){
 			//set modal data
 			var champion = $(this).data('champion');
+			console.log(champion);
 			$('.champion_statistics_modal .champion_name').html(champion.name);
 			$('.champion_statistics_modal .champion_title').html(champion.title);
 			$('.champion_statistics_modal .match_count_placeholder').html(champion.match_count_span);

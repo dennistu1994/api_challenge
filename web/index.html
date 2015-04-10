@@ -36,10 +36,35 @@
 				<li role="presentation" class="active"><a href="#">Champion
 						Statistics</a></li>
 			</ul>
-			<div class="panel champion_statistics">
-				<input class="form-control champion_search" type="text"
-					placeholder="Search for champion">
+
+			<div class="row">
+				<div class="col-sm-10">
+					<input class="form-control champion_search" type="text"
+						placeholder="Search for champion" />
+				</div>
+				<div class="col-sm-2">
+					<div class="dropdown">
+						<button class="btn btn-default dropdown-toggle sort_dropdown" type="button"
+							data-toggle="dropdown" aria-expanded="false">
+							Sort By<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu"
+							aria-labelledby="dropdownMenu1">
+							<li role="presentation"><a role="menuitem" tabindex="-1"
+								href="#">Win Rate</a></li>
+						</ul>
+					</div>
+				</div>
 			</div>
+
+
+			<div class="panel champion_statistics unsorted active"></div>
+
+			<div class="panel champion_statistics sorted_by_win_rate"></div>
+		</div>
+		<div class="panel-footer">
+			Data taken from <span class="total_match_count_placeholder"></span>
+			matches
 		</div>
 	</div>
 
@@ -51,12 +76,20 @@
 						aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
-					<h4><span class="champion_name"></span>, <span class="champion_title"></span></h4>
+					<h4>
+						<span class="champion_name"></span>, <span class="champion_title"></span>
+					</h4>
 				</div>
 				<div class="modal-body">
-					<p>Matches Recorded: <span class="match_count_placeholder"></span></p>
-					<p>Win Rate: <span class="win_rate_placeholder"></span></p>
-					<p>Average KDA: <span class="average_kda_placeholder"></span></p>
+					<p>
+						Matches Recorded: <span class="match_count_placeholder"></span>
+					</p>
+					<p>
+						Win Rate: <span class="win_rate_placeholder"></span>
+					</p>
+					<p>
+						Average KDA: <span class="average_kda_placeholder"></span>
+					</p>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
