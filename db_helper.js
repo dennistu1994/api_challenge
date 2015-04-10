@@ -227,7 +227,8 @@ DbHelper.reset_champion_statistics = function(callback){
 			gold_earned: 0,
 			cc_seconds: 0,
 			killing_sprees: 0,
-			first_blood: 0
+			first_blood: 0,
+			ban_count: 0
 		};
 		champion_statistics.update({}, {
 			$set: stats

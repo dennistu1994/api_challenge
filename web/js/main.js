@@ -23,7 +23,7 @@ require(['scheduler', 'ajax_helper', 'task_factory', 'event_handlers'], function
 			var sort_by_win_rate = TaskFactory.sort_by_win_rate(res.data, function(){
 				window.calculated_stats.sort_by_win_rate = sort_by_win_rate.context.result;
 				sort_by_win_rate.context.result.forEach(function(champ){
-					console.log(champ.name, champ.key, champ.win_rate);
+					console.log(champ.name, champ.id, champ.win_rate);
 				});
 			});
 			Scheduler.queue_task(sort_by_win_rate);

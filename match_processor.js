@@ -3,16 +3,15 @@ var DbHelper = require('./db_helper');
 var MatchProcessor = {};
 
 MatchProcessor.process_nurf_match = function(match_data, callback){
-	//store the match
+	// store the match
 	if(match_data.matchId){
-		//valid
+		// valid
 		DbHelper.insert_nurf_match(match_data, function(noerr){
 			if(noerr){
-				var i,
-				champion_stats=[];
-				//update champion statistics
+				var i, j, champion_stats=[];
+				// update champion statistics
 				for(i = 0; i < match_data.participants.length; i++){
-					//select only stats that have significant meaning
+					// select only stats that have significant meaning
 					champion_stats.push({
 						id: match_data.participants[i].championId,
 						inc_data: {
@@ -35,6 +34,16 @@ MatchProcessor.process_nurf_match = function(match_data, callback){
 							first_blood: (match_data.participants[i].stats.firstBloodKill?1:0)
 						}
 					});
+				}
+				for(i = 0; i < match_data.teams.length; i++){
+					for(j = 0; j < match_data.teams[i].bans.length; j++){
+						champion_stats.push({
+							id: match_data.participants[i].championId,
+							inc_data: {
+								ban_count: 1
+							}
+						});
+					}
 				}
 				DbHelper.increment_champion_stats(champion_stats, callback);
 			} else {
