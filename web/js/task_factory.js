@@ -1,4 +1,4 @@
-define(['scheduler', 'html_templates'], function(Scheduler, HTMLTemplates){
+define(['scheduler', 'html_templates', 'config'], function(Scheduler, HTMLTemplates, Config){
 	var TaskFactory = {};
 	
 	TaskFactory.make_champion_html = function(champion_array, callback){
@@ -9,9 +9,11 @@ define(['scheduler', 'html_templates'], function(Scheduler, HTMLTemplates){
 			//step
 			this.data[this.current_index].icon =  HTMLTemplates.get_champion_icon(this.data[this.current_index].name, this.data[this.current_index].key);
 			this.data[this.current_index].match_count_span = HTMLTemplates.get_value_span('match_count', this.data[this.current_index].match_count);
+			this.data[this.current_index].penta_kills_span = HTMLTemplates.get_value_span('penta_kills', this.data[this.current_index].penta_kills);
+
 			this.data[this.current_index].win_rate_span= HTMLTemplates.get_placeholder_span('win_rate');
 			this.data[this.current_index].average_kda_span= HTMLTemplates.get_placeholder_span('average_kda');
-
+			
 			$(this.data[this.current_index].icon).data('champion', this.data[this.current_index]);
 			$('.panel.champion_statistics.unsorted').append($(this.data[this.current_index].icon));
 			this.current_index++;
@@ -28,7 +30,16 @@ define(['scheduler', 'html_templates'], function(Scheduler, HTMLTemplates){
 			current_index: 0
 		}, function(){
 			//step
-			$(selector).append($(this.data[this.current_index].icon).clone(true));
+			if(this.current_index === 0){
+				$(selector).html('');
+			}
+			var new_icon = $(this.data[this.current_index].icon).clone(true);
+			$(selector).append(new_icon);
+			if(this.data[this.current_index].gray === true){
+				new_icon.children().css({opacity: Config.gray_icon_opacity});
+			} else {
+				new_icon.children().css({opacity: 1});
+			}
 			this.current_index++;
 		}, function(){
 			//condition
@@ -82,6 +93,28 @@ define(['scheduler', 'html_templates'], function(Scheduler, HTMLTemplates){
 			} else {
 				var temp = 0;
 				while (this.result[temp] && (next.win_rate < this.result[temp].win_rate)){
+					temp++;
+				}
+				this.result.splice(temp, 0, next); //insertion sort
+			}
+			this.index++;
+		}, function(){
+			return this.index === this.data.length;
+		}, callback);
+	};
+	
+	TaskFactory.sort_by = function(field_name, champion_array, callback){
+		return new Scheduler.Task({
+			data: champion_array,
+			result: [],
+			index: 0
+		}, function(){
+			var next = this.data[this.index];
+			if(this.index === 0){
+				this.result.push(next);
+			} else {
+				var temp = 0;
+				while (this.result[temp] && (next[field_name] < this.result[temp][field_name])){
 					temp++;
 				}
 				this.result.splice(temp, 0, next); //insertion sort

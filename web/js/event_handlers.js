@@ -10,9 +10,11 @@ define(['config'], function(Config){
 					if(EventHandlers.champion_array[i].icon){
 						var regex = new RegExp(this.value, "i");
 						if(regex.exec(EventHandlers.champion_array[i].name) || regex.exec(EventHandlers.champion_array[i].key)){
-							$(EventHandlers.champion_array[i].icon).removeClass('gray').stop().animate({opacity: 1}, Config.icon_fade_duration);
+							EventHandlers.champion_array[i].gray = false;
+							$('[data-champion-key="'+EventHandlers.champion_array[i].key+'"]').removeClass('gray').stop().animate({opacity: 1}, Config.icon_fade_duration);
 						} else {
-							$(EventHandlers.champion_array[i].icon).addClass('gray').stop().animate({opacity: 0.3}, Config.icon_fade_duration);
+							EventHandlers.champion_array[i].gray = true;
+							$('[data-champion-key="'+EventHandlers.champion_array[i].key+'"]').addClass('gray').stop().animate({opacity: Config.gray_icon_opacity}, Config.icon_fade_duration);
 						}
 					}
 				}
@@ -28,6 +30,7 @@ define(['config'], function(Config){
 			$('.champion_statistics_modal .match_count_placeholder').html(champion.match_count_span);
 			$('.champion_statistics_modal .win_rate_placeholder').html(champion.win_rate_span);
 			$('.champion_statistics_modal .average_kda_placeholder').html(champion.average_kda_span);
+			$('.champion_statistics_modal .penta_kills_placeholder').html(champion.penta_kills_span);
 
 			$('.champion_statistics_modal').modal({
 	 	 		"show" : true

@@ -1,7 +1,7 @@
 define(['config'], function(Config){
 	var HTMLTemplates = {
 		get_champion_icon: function(champion_name, champion_key){
-			var icon = $('<span class="champion_icon" title="'+champion_name+'" style="background-image: url(http://ddragon.leagueoflegends.com/cdn/'+Config.ddragon_version+'/img/champion/'+champion_key+'.png);"></span>');
+			var icon = $('<span class="champion_icon_container"><span class="champion_icon" data-champion-key="'+champion_key+'" title="'+champion_name+'" style="background-image: url(http://ddragon.leagueoflegends.com/cdn/'+Config.ddragon_version+'/img/champion/'+champion_key+'.png);"></span></span>');
 			return icon[0];
 		},
 		

@@ -1,6 +1,6 @@
 <html class="full" lang="en">
 <head>
-<title>Champion Leaderboard - Urf 2015</title>
+<title>Champion Statistics - URF 2015</title>
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -25,7 +25,7 @@
 	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 		<div class="container">
 			<div class="navbar-header">
-				<a class="navbar-brand" href="#">Champion Leaderboard - Urf 2015</a>
+				<a class="navbar-brand" href="#">Champion Statistics - URF 2015</a>
 			</div>
 		</div>
 	</nav>
@@ -44,14 +44,16 @@
 				</div>
 				<div class="col-sm-2">
 					<div class="dropdown">
-						<button class="btn btn-default dropdown-toggle sort_dropdown" type="button"
-							data-toggle="dropdown" aria-expanded="false">
+						<button class="btn btn-default dropdown-toggle sort_dropdown"
+							type="button" data-toggle="dropdown" aria-expanded="false">
 							Sort By<span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu" role="menu"
 							aria-labelledby="dropdownMenu1">
-							<li role="presentation"><a role="menuitem" tabindex="-1"
-								href="#">Win Rate</a></li>
+							<li role="presentation">
+							<a role="menuitem" tabindex="-1" href="#" onclick="$('.champion_statistics.active').removeClass('active');$('.sorted_by_win_rate').addClass('active');">Win Rate</a></li>
+							<li role="presentation">
+							<a role="menuitem" tabindex="-1" href="#" onclick="$('.champion_statistics.active').removeClass('active');$('.sorted_by_penta_kills').addClass('active');">Pentakills</a></li>
 						</ul>
 					</div>
 				</div>
@@ -60,11 +62,17 @@
 
 			<div class="panel champion_statistics unsorted active"></div>
 
-			<div class="panel champion_statistics sorted_by_win_rate"></div>
+			<div class="panel champion_statistics sorted_by_win_rate">
+				Sorting <span class="spinner"></span>
+			</div>
+			
+			<div class="panel champion_statistics sorted_by_penta_kills">
+				Sorting <span class="spinner"></span>
+			</div>
 		</div>
 		<div class="panel-footer">
 			Data taken from <span class="total_match_count_placeholder"></span>
-			matches
+			URF matches
 		</div>
 	</div>
 
@@ -89,6 +97,9 @@
 					</p>
 					<p>
 						Average KDA: <span class="average_kda_placeholder"></span>
+					</p>
+					<p>
+						Pentakills: <span class="penta_kills_placeholder"></span>
 					</p>
 				</div>
 				<div class="modal-footer">

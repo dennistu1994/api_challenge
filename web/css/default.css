@@ -19,15 +19,34 @@
 	display:block;
 }
 
-.champion_icon{
+.champion_icon,.champion_icon.gray:hover{
 	width: 57px;
 	height: 57px;
+	position: absolute;
 	display: inline-block;
 	background-size: contain;
 	cursor: pointer;
+	z-index: 0;
+	top: 0;
+	left: 0;
+}
+
+.champion_icon:hover{
+	width: 67px;
+	height: 67px;
+	z-index: 1;
+	top: -5px;
+	left: -5px;
 }
 
 .champion_icon.gray{
+}
+
+.champion_icon_container{
+	display:inline-block;
+	width: 57px;
+	height: 57px;
+	position: relative;
 }
 
 .champion_search, .sort_dropdown{
