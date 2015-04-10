@@ -144,6 +144,7 @@ define(['scheduler', 'html_templates', 'config'], function(Scheduler, HTMLTempla
 		}, function(){
 			//condition
 			if(this.current_index === this.data.length){
+				this.result = this.result / 10;
 				return true;
 			}
 		}, callback);

@@ -3,7 +3,6 @@ require(['scheduler', 'ajax_helper', 'task_factory', 'event_handlers', 'html_tem
 		var basic_stats_available = false;
 		AjaxHelper.get_champion_statistics(function(res){
 			basic_stats_available = true;
-			window.basic_stats = res;
 			EventHandlers.champion_array = res.data;
 			
 			var make_champion_html = TaskFactory.make_champion_html(res.data);
@@ -55,11 +54,6 @@ require(['scheduler', 'ajax_helper', 'task_factory', 'event_handlers', 'html_tem
 				Scheduler.queue_task(sort_by_ban_rate);
 			});
 			Scheduler.queue_task(calculate_matches_analyzed);
-			
-			var calculate_total_win_count = TaskFactory.calculate_total_win_count(res.data, function(){
-				window.calculated_stats.win_count = calculate_total_win_count.context.result;
-			});
-			Scheduler.queue_task(calculate_total_win_count);
 		});
 	});
 });
